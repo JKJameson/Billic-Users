@@ -291,9 +291,6 @@ class Users {
 			echo '</ul></div><div class="tab-content" style="background: #fff;padding: 0 20px 0 20px;-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;text-align: justify;text-justify: inter-word"><div class="tab-pane active" id="clientPage" style="padding:10px"><div id="dashboardLoader">Loading...</div></div></div>';
 			return;
 		}
-		if (isset($_GET['POST'])) {
-			$_POST = json_decode(base64_decode($_GET['POST']) , true);
-		}
 		$billic->module('ListManager');
 		$billic->modules['ListManager']->configure(array(
 			'search' => array(
