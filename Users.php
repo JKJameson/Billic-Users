@@ -24,7 +24,7 @@ class Users {
 				$billic->disable_content();
 				if ($_GET['AjaxPage'] == 'Account') {
 					echo '<form method="POST">';
-					echo '<table class="table table-striped"><tr><th colspan="4">Account Information</th></tr>';
+					echo '<div class="table-responsive"><table class="table table-striped"><tr><th colspan="4">Account Information</th></tr>';
 					echo '<tr>';
 					echo '<td style="width: 10%">First Name</td><td style="width: 40%"><input type="text" class="form-control" name="firstname" value="' . safe($user_row['firstname']) . '"></td>';
 					echo '<td style="width: 10%">Address 1</td><td style="width: 40%"><input type="text" class="form-control" name="address1" value="' . safe($user_row['address1']) . '"></td>';
@@ -51,14 +51,14 @@ class Users {
 					echo '<td>Password</td><td><input type="text" class="form-control" name="password" value="Edit to Change Password" onblur="if(this.value==\'\') this.value=\'Edit to Change Password\';" onFocus="if(this.value==\'Edit to Change Password\') this.value=\'\';"></td>';
 					echo '</tr>';
 					echo '<tr><td>Notes</td><td colspan="3"><textarea name="notes" class="form-control">' . safe($user_row['notes']) . '</textarea></td></tr>';
-					echo '</table>';
-					echo '<table class="table table-striped"><tr><th colspan="4">Registration Information</th></tr>';
+					echo '</table></div>';
+					echo '<div class="table-responsive"><table class="table table-striped"><tr><th colspan="4">Registration Information</th></tr>';
 					echo '<tr><td style="width: 10%">User ID</td><td style="width: 40%">#' . $user_row['id'] . '</td>';
 					echo '<td style="width: 10%">Date Registered</td><td style="width: 40%">' . date('j\<\s\u\p\>S\<\/\s\u\p\> F Y H:i', $user_row['datecreated']) . '</td></tr>';
 					echo '<tr><td>Registered IP</td><td>' . $user_row['registered_ip'] . '</td>';
 					echo '<td>Hostname</td><td>' . $user_row['registered_host'] . '</td></tr>';
-					echo '</table>';
-					echo '<table class="table table-striped"><tr><th colspan="2">Account Settings</th></tr>';
+					echo '</table></div>';
+					echo '<div class="table-responsive"><table class="table table-striped"><tr><th colspan="2">Account Settings</th></tr>';
 					if ($billic->module_exists('DiscountTiers')) {
 						$billic->module('DiscountTiers');
 						echo '<tr><td style="width: 15%">Discount Tier</td><td>' . $billic->modules['DiscountTiers']->calc_discount_tier($user_row) . '%</td></tr>';
@@ -74,10 +74,10 @@ class Users {
 					echo '<tr><td>Opt-out Mass Emails</td><td><input type="checkbox" name="emailoptout" value="1"' . ($user_row['emailoptout'] == '1' ? ' checked' : '') . '> Prevents the client from receiving email from the Mass Email module. Unsubscribe method.</td></tr>';
 					echo '<tr><td>Block Orders</td><td><input type="checkbox" name="blockorders" value="1"' . ($user_row['blockorders'] == '1' ? ' checked' : '') . '> Prevents the client from ordering any new services. Renewal invoices will not be generated either.</td></tr>';
 					echo '<tr><td>Monthly Summary</td><td><input type="checkbox" name="monthly_summary" value="1"' . ($user_row['monthly_summary'] == '1' ? ' checked' : '') . '> Sends a report to the user which tells them the total value of invoices and tax paid every month.</td></tr>';
-					echo '</table>';
+					echo '</table></div>';
 					echo '<div align="center"><input type="submit" class="btn btn-success" name="account_update" value="Update Client Information &raquo;"></div></form>';
 					echo '<h2>Credit History</h2>';
-					echo '<table class="table table-striped"><tr><th>ID</th><th>Date</th><th>Description</th><th>Amount</th><th>Invoice</th><th>Actions</th></tr>';
+					echo '<div class="table-responsive"><table class="table table-striped"><tr><th>ID</th><th>Date</th><th>Description</th><th>Amount</th><th>Invoice</th><th>Actions</th></tr>';
 					$credits = $db->q('SELECT * FROM `logs_credit` WHERE `clientid` = ? ORDER BY `date` DESC', $user_row['id']);
 					if (empty($credits)) {
 						echo '<tr><td colspan="20">No credit history.</td></tr>';
@@ -95,7 +95,7 @@ class Users {
 						}
 						echo '</td></tr>';
 					}
-					echo '</table>';
+					echo '</table></div>';
 					exit;
 				}
 				if (!$billic->user_has_permission($billic->user, $_GET['AjaxPage'])) {
@@ -246,7 +246,7 @@ class Users {
 				$user_row = $user_row[0];
 				$billic->status = 'updated';
 			}
-			echo '<img src="' . $billic->avatar($user_row['email'], 100) . '" class="pull-left" style="margin: 5px 5px 5px 0"><h3>' . $user_row['firstname'] . ' ' . $user_row['lastname'] . '' . (empty($user_row['companyname']) ? '' : ' - ' . $user_row['companyname']) . '</h3><div class="btn-group" role="group" aria-label="Account Actions">';
+			echo '<img src="' . $billic->avatar($user_row['email'], 100) . '" class="float-left" style="margin: 5px 5px 5px 0"><h3>' . $user_row['firstname'] . ' ' . $user_row['lastname'] . '' . (empty($user_row['companyname']) ? '' : ' - ' . $user_row['companyname']) . '</h3><div class="btn-group" role="group" aria-label="Account Actions">';
 			if ($billic->user_has_permission($billic->user, 'Users_Login_As_User')) {
 				echo '<a class="btn btn-default" href="/Admin/Users/ID/' . $user_row['id'] . '/Login/Yes/"><i class="icon-zoom-in"></i> Login as User</a></button>';
 			}
@@ -281,11 +281,11 @@ class Users {
 				}
 			}
 			$billic->show_errors();
-			echo '<style>#dashboardLoader{left:50%;font-size:25px;margin:5em auto;width:1em;height:1em;border-radius:50%;text-indent:-9999em;-webkit-animation:load4 1.3s infinite linear;animation:load4 1.3s infinite linear;-webkit-transform:translateZ(0);-ms-transform:translateZ(0);transform:translateZ(0)}@-webkit-keyframes load4{0%,100%{box-shadow:0 -3em 0 .2em #074f99,2em -2em 0 0 #074f99,3em 0 0 -.5em #074f99,2em 2em 0 -.5em #074f99,0 3em 0 -.5em #074f99,-2em 2em 0 -.5em #074f99,-3em 0 0 -.5em #074f99,-2em -2em 0 0 #074f99}12.5%{box-shadow:0 -3em 0 0 #074f99,2em -2em 0 .2em #074f99,3em 0 0 0 #074f99,2em 2em 0 -.5em #074f99,0 3em 0 -.5em #074f99,-2em 2em 0 -.5em #074f99,-3em 0 0 -.5em #074f99,-2em -2em 0 -.5em #074f99}25%{box-shadow:0 -3em 0 -.5em #074f99,2em -2em 0 0 #074f99,3em 0 0 .2em #074f99,2em 2em 0 0 #074f99,0 3em 0 -.5em #074f99,-2em 2em 0 -.5em #074f99,-3em 0 0 -.5em #074f99,-2em -2em 0 -.5em #074f99}37.5%{box-shadow:0 -3em 0 -.5em #074f99,2em -2em 0 -.5em #074f99,3em 0 0 0 #074f99,2em 2em 0 .2em #074f99,0 3em 0 0 #074f99,-2em 2em 0 -.5em #074f99,-3em 0 0 -.5em #074f99,-2em -2em 0 -.5em #074f99}50%{box-shadow:0 -3em 0 -.5em #074f99,2em -2em 0 -.5em #074f99,3em 0 0 -.5em #074f99,2em 2em 0 0 #074f99,0 3em 0 .2em #074f99,-2em 2em 0 0 #074f99,-3em 0 0 -.5em #074f99,-2em -2em 0 -.5em #074f99}62.5%{box-shadow:0 -3em 0 -.5em #074f99,2em -2em 0 -.5em #074f99,3em 0 0 -.5em #074f99,2em 2em 0 -.5em #074f99,0 3em 0 0 #074f99,-2em 2em 0 .2em #074f99,-3em 0 0 0 #074f99,-2em -2em 0 -.5em #074f99}75%{box-shadow:0 -3em 0 -.5em #074f99,2em -2em 0 -.5em #074f99,3em 0 0 -.5em #074f99,2em 2em 0 -.5em #074f99,0 3em 0 -.5em #074f99,-2em 2em 0 0 #074f99,-3em 0 0 .2em #074f99,-2em -2em 0 0 #074f99}87.5%{box-shadow:0 -3em 0 0 #074f99,2em -2em 0 -.5em #074f99,3em 0 0 -.5em #074f99,2em 2em 0 -.5em #074f99,0 3em 0 -.5em #074f99,-2em 2em 0 0 #074f99,-3em 0 0 0 #074f99,-2em -2em 0 .2em #074f99}}@keyframes load4{0%,100%{box-shadow:0 -3em 0 .2em #074f99,2em -2em 0 0 #074f99,3em 0 0 -.5em #074f99,2em 2em 0 -.5em #074f99,0 3em 0 -.5em #074f99,-2em 2em 0 -.5em #074f99,-3em 0 0 -.5em #074f99,-2em -2em 0 0 #074f99}12.5%{box-shadow:0 -3em 0 0 #074f99,2em -2em 0 .2em #074f99,3em 0 0 0 #074f99,2em 2em 0 -.5em #074f99,0 3em 0 -.5em #074f99,-2em 2em 0 -.5em #074f99,-3em 0 0 -.5em #074f99,-2em -2em 0 -.5em #074f99}25%{box-shadow:0 -3em 0 -.5em #074f99,2em -2em 0 0 #074f99,3em 0 0 .2em #074f99,2em 2em 0 0 #074f99,0 3em 0 -.5em #074f99,-2em 2em 0 -.5em #074f99,-3em 0 0 -.5em #074f99,-2em -2em 0 -.5em #074f99}37.5%{box-shadow:0 -3em 0 -.5em #074f99,2em -2em 0 -.5em #074f99,3em 0 0 0 #074f99,2em 2em 0 .2em #074f99,0 3em 0 0 #074f99,-2em 2em 0 -.5em #074f99,-3em 0 0 -.5em #074f99,-2em -2em 0 -.5em #074f99}50%{box-shadow:0 -3em 0 -.5em #074f99,2em -2em 0 -.5em #074f99,3em 0 0 -.5em #074f99,2em 2em 0 0 #074f99,0 3em 0 .2em #074f99,-2em 2em 0 0 #074f99,-3em 0 0 -.5em #074f99,-2em -2em 0 -.5em #074f99}62.5%{box-shadow:0 -3em 0 -.5em #074f99,2em -2em 0 -.5em #074f99,3em 0 0 -.5em #074f99,2em 2em 0 -.5em #074f99,0 3em 0 0 #074f99,-2em 2em 0 .2em #074f99,-3em 0 0 0 #074f99,-2em -2em 0 -.5em #074f99}75%{box-shadow:0 -3em 0 -.5em #074f99,2em -2em 0 -.5em #074f99,3em 0 0 -.5em #074f99,2em 2em 0 -.5em #074f99,0 3em 0 -.5em #074f99,-2em 2em 0 0 #074f99,-3em 0 0 .2em #074f99,-2em -2em 0 0 #074f99}87.5%{box-shadow:0 -3em 0 0 #074f99,2em -2em 0 -.5em #074f99,3em 0 0 -.5em #074f99,2em 2em 0 -.5em #074f99,0 3em 0 -.5em #074f99,-2em 2em 0 0 #074f99,-3em 0 0 0 #074f99,-2em -2em 0 .2em #074f99}}</style><script>function loadClientPage(page) { $( "#clientPage" ).html(\'<div id="dashboardLoader">Loading...</div>\'); $.get( "/Admin/Users/ID/' . $user_row['id'] . '/AjaxPage/"+encodeURIComponent(page)+"/", function( data ) { $( "#clientPage" ).html( data ); }); } addLoadEvent(function() { loadClientPage(\'Account\'); });</script><div class="tab-bg"><ul class="nav nav-tabs"><li class="active"><a href="#" data-toggle="tab" onClick="loadClientPage(\'Account\')"><i class="icon-user"></i> Account</a></li>';
+			echo '<style>#dashboardLoader{left:50%;font-size:25px;margin:5em auto;width:1em;height:1em;border-radius:50%;text-indent:-9999em;-webkit-animation:load4 1.3s infinite linear;animation:load4 1.3s infinite linear;-webkit-transform:translateZ(0);-ms-transform:translateZ(0);transform:translateZ(0)}@-webkit-keyframes load4{0%,100%{box-shadow:0 -3em 0 .2em #074f99,2em -2em 0 0 #074f99,3em 0 0 -.5em #074f99,2em 2em 0 -.5em #074f99,0 3em 0 -.5em #074f99,-2em 2em 0 -.5em #074f99,-3em 0 0 -.5em #074f99,-2em -2em 0 0 #074f99}12.5%{box-shadow:0 -3em 0 0 #074f99,2em -2em 0 .2em #074f99,3em 0 0 0 #074f99,2em 2em 0 -.5em #074f99,0 3em 0 -.5em #074f99,-2em 2em 0 -.5em #074f99,-3em 0 0 -.5em #074f99,-2em -2em 0 -.5em #074f99}25%{box-shadow:0 -3em 0 -.5em #074f99,2em -2em 0 0 #074f99,3em 0 0 .2em #074f99,2em 2em 0 0 #074f99,0 3em 0 -.5em #074f99,-2em 2em 0 -.5em #074f99,-3em 0 0 -.5em #074f99,-2em -2em 0 -.5em #074f99}37.5%{box-shadow:0 -3em 0 -.5em #074f99,2em -2em 0 -.5em #074f99,3em 0 0 0 #074f99,2em 2em 0 .2em #074f99,0 3em 0 0 #074f99,-2em 2em 0 -.5em #074f99,-3em 0 0 -.5em #074f99,-2em -2em 0 -.5em #074f99}50%{box-shadow:0 -3em 0 -.5em #074f99,2em -2em 0 -.5em #074f99,3em 0 0 -.5em #074f99,2em 2em 0 0 #074f99,0 3em 0 .2em #074f99,-2em 2em 0 0 #074f99,-3em 0 0 -.5em #074f99,-2em -2em 0 -.5em #074f99}62.5%{box-shadow:0 -3em 0 -.5em #074f99,2em -2em 0 -.5em #074f99,3em 0 0 -.5em #074f99,2em 2em 0 -.5em #074f99,0 3em 0 0 #074f99,-2em 2em 0 .2em #074f99,-3em 0 0 0 #074f99,-2em -2em 0 -.5em #074f99}75%{box-shadow:0 -3em 0 -.5em #074f99,2em -2em 0 -.5em #074f99,3em 0 0 -.5em #074f99,2em 2em 0 -.5em #074f99,0 3em 0 -.5em #074f99,-2em 2em 0 0 #074f99,-3em 0 0 .2em #074f99,-2em -2em 0 0 #074f99}87.5%{box-shadow:0 -3em 0 0 #074f99,2em -2em 0 -.5em #074f99,3em 0 0 -.5em #074f99,2em 2em 0 -.5em #074f99,0 3em 0 -.5em #074f99,-2em 2em 0 0 #074f99,-3em 0 0 0 #074f99,-2em -2em 0 .2em #074f99}}@keyframes load4{0%,100%{box-shadow:0 -3em 0 .2em #074f99,2em -2em 0 0 #074f99,3em 0 0 -.5em #074f99,2em 2em 0 -.5em #074f99,0 3em 0 -.5em #074f99,-2em 2em 0 -.5em #074f99,-3em 0 0 -.5em #074f99,-2em -2em 0 0 #074f99}12.5%{box-shadow:0 -3em 0 0 #074f99,2em -2em 0 .2em #074f99,3em 0 0 0 #074f99,2em 2em 0 -.5em #074f99,0 3em 0 -.5em #074f99,-2em 2em 0 -.5em #074f99,-3em 0 0 -.5em #074f99,-2em -2em 0 -.5em #074f99}25%{box-shadow:0 -3em 0 -.5em #074f99,2em -2em 0 0 #074f99,3em 0 0 .2em #074f99,2em 2em 0 0 #074f99,0 3em 0 -.5em #074f99,-2em 2em 0 -.5em #074f99,-3em 0 0 -.5em #074f99,-2em -2em 0 -.5em #074f99}37.5%{box-shadow:0 -3em 0 -.5em #074f99,2em -2em 0 -.5em #074f99,3em 0 0 0 #074f99,2em 2em 0 .2em #074f99,0 3em 0 0 #074f99,-2em 2em 0 -.5em #074f99,-3em 0 0 -.5em #074f99,-2em -2em 0 -.5em #074f99}50%{box-shadow:0 -3em 0 -.5em #074f99,2em -2em 0 -.5em #074f99,3em 0 0 -.5em #074f99,2em 2em 0 0 #074f99,0 3em 0 .2em #074f99,-2em 2em 0 0 #074f99,-3em 0 0 -.5em #074f99,-2em -2em 0 -.5em #074f99}62.5%{box-shadow:0 -3em 0 -.5em #074f99,2em -2em 0 -.5em #074f99,3em 0 0 -.5em #074f99,2em 2em 0 -.5em #074f99,0 3em 0 0 #074f99,-2em 2em 0 .2em #074f99,-3em 0 0 0 #074f99,-2em -2em 0 -.5em #074f99}75%{box-shadow:0 -3em 0 -.5em #074f99,2em -2em 0 -.5em #074f99,3em 0 0 -.5em #074f99,2em 2em 0 -.5em #074f99,0 3em 0 -.5em #074f99,-2em 2em 0 0 #074f99,-3em 0 0 .2em #074f99,-2em -2em 0 0 #074f99}87.5%{box-shadow:0 -3em 0 0 #074f99,2em -2em 0 -.5em #074f99,3em 0 0 -.5em #074f99,2em 2em 0 -.5em #074f99,0 3em 0 -.5em #074f99,-2em 2em 0 0 #074f99,-3em 0 0 0 #074f99,-2em -2em 0 .2em #074f99}}</style><script>function loadClientPage(page) { $( "#clientPage" ).html(\'<div id="dashboardLoader">Loading...</div>\'); $.get( "/Admin/Users/ID/' . $user_row['id'] . '/AjaxPage/"+encodeURIComponent(page)+"/", function( data ) { $( "#clientPage" ).html( data ); }); } addLoadEvent(function() { loadClientPage(\'Account\'); });</script><div class="tab-bg"><ul class="nav nav-tabs"><li class="nav-item"><a href="#" class="nav-link active" data-toggle="tab" onClick="loadClientPage(\'Account\')"><i class="icon-user"></i> Account</a></li>';
 			$modules = $billic->module_list_function('users_submodule');
 			foreach ($modules as $module) {
 				if ($billic->user_has_permission($billic->user, $module['id'])) {
-					echo '<li><a href="#" data-toggle="tab" onClick="loadClientPage(\'' . $module['id'] . '\')">' . $module['id'] . '</a></li>';
+					echo '<li class="nav-item"><a href="#" class="nav-link" data-toggle="tab" onClick="loadClientPage(\'' . $module['id'] . '\')">' . $module['id'] . '</a></li>';
 				}
 			}
 			echo '</ul></div><div class="tab-content" style="background: #fff;padding: 0 20px 0 20px;-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;text-align: justify;text-justify: inter-word"><div class="tab-pane active" id="clientPage" style="padding:10px"><div id="dashboardLoader">Loading...</div></div></div>';
@@ -352,7 +352,7 @@ class Users {
 		$billic->show_errors();
 		echo $billic->modules['ListManager']->search_box();
 		echo '<div style="float: right;padding-right: 40px;">Showing ' . $pagination['start_text'] . ' to ' . $pagination['end_text'] . ' of ' . $total . ' Users</div>' . $billic->modules['ListManager']->search_link();
-		echo '<table class="table table-striped"><tr><th>Name</th><th>Company</th><th>Country</th><th>Services</th><th>Credit</th><th>Registered</th><th>Status</th></tr>';
+		echo '<div class="table-responsive"><table class="table table-striped"><tr><th>Name</th><th>Company</th><th>Country</th><th>Services</th><th>Credit</th><th>Registered</th><th>Status</th></tr>';
 		if (empty($users)) {
 			echo '<tr><td colspan="20">No Users matching filter.</td></tr>';
 		}
@@ -384,7 +384,7 @@ class Users {
 			}
 			echo '<tr><td><a href="/Admin/Users/ID/' . $user_row['id'] . '/">' . $user_row['firstname'] . ' ' . $user_row['lastname'] . '</a></td><td>' . $user_row['companyname'] . '</td><td>' . $billic->flag_icon($user_row['country']) . '</td><td>' . $services . '</td><td>' . get_config('billic_currency_prefix') . $user_row['credit'] . get_config('billic_currency_suffix') . '</td><td>' . $billic->date_display($user_row['datecreated']) . '</td><td>' . $user_row['status'] . '</td></tr>';
 		}
-		echo '</table>';
+		echo '</table></div>';
 	}
 	function exportdata_submodule() {
 		global $billic, $db;
