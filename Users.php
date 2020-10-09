@@ -246,7 +246,7 @@ class Users {
 				$user_row = $user_row[0];
 				$billic->status = 'updated';
 			}
-			echo '<img src="' . $billic->avatar($user_row['email'], 100) . '" class="float-left" style="margin: 5px 5px 5px 0"><h3>' . $user_row['firstname'] . ' ' . $user_row['lastname'] . '' . (empty($user_row['companyname']) ? '' : ' - ' . $user_row['companyname']) . '</h3><div class="btn-group" role="group" aria-label="Account Actions">';
+			echo '<img src="' . $billic->avatar($user_row['email'], 100) . '" class="float-left" style="margin: 5px 5px 5px 0"><h3>' . safe($user_row['firstname']) . ' ' . safe($user_row['lastname']) . '' . safe((empty($user_row['companyname']) ? '' : ' - ' . $user_row['companyname'])) . '</h3><div class="btn-group" role="group" aria-label="Account Actions">';
 			if ($billic->user_has_permission($billic->user, 'Users_Login_As_User')) {
 				echo '<a class="btn btn-default" href="/Admin/Users/ID/' . $user_row['id'] . '/Login/Yes/"><i class="icon-zoom-in"></i> Login as User</a></button>';
 			}
@@ -382,7 +382,7 @@ class Users {
 			if (empty($services)) {
 				$services = 'None';
 			}
-			echo '<tr><td><a href="/Admin/Users/ID/' . $user_row['id'] . '/">' . $user_row['firstname'] . ' ' . $user_row['lastname'] . '</a></td><td>' . $user_row['companyname'] . '</td><td>' . $billic->flag_icon($user_row['country']) . '</td><td>' . $services . '</td><td>' . get_config('billic_currency_prefix') . $user_row['credit'] . get_config('billic_currency_suffix') . '</td><td>' . $billic->date_display($user_row['datecreated']) . '</td><td>' . $user_row['status'] . '</td></tr>';
+			echo '<tr><td><a href="/Admin/Users/ID/' . $user_row['id'] . '/">' . safe($user_row['firstname']) . ' ' . safe($user_row['lastname']) . '</a></td><td>' . safe($user_row['companyname']) . '</td><td>' . $billic->flag_icon($user_row['country']) . '</td><td>' . $services . '</td><td>' . get_config('billic_currency_prefix') . $user_row['credit'] . get_config('billic_currency_suffix') . '</td><td>' . $billic->date_display($user_row['datecreated']) . '</td><td>' . $user_row['status'] . '</td></tr>';
 		}
 		echo '</table></div>';
 	}
