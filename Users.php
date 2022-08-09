@@ -157,6 +157,7 @@ class Users {
 					$billic->modules['FormBuilder']->check_everything(array(
 						'form' => $form,
 					));
+					$_POST['serviceid'] = floor($_POST['serviceid']);
 					if (empty($billic->errors)) {
 						$id = $db->insert('tickets', array(
 							'userid' => $user_row['id'],
