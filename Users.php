@@ -60,8 +60,7 @@ class Users {
 					echo '</table></div>';
 					echo '<div class="table-responsive"><table class="table table-striped"><tr><th colspan="2">Account Settings</th></tr>';
 					if ($billic->module_exists('DiscountTiers')) {
-						$billic->module('DiscountTiers');
-						echo '<tr><td style="width: 15%">Discount Tier</td><td>' . $billic->modules['DiscountTiers']->calc_discount_tier($user_row) . '%</td></tr>';
+						echo '<tr><td style="width: 15%">Discount Tier</td><td>' . $billic->module('DiscountTiers', 'calc_discount_tier', $user_row) . '%</td></tr>';
 					}
 					echo '<tr><td>Discount Overide</td><td><div class="input-group"><input type="text" name="discount" class="form-control" value="' . safe($user_row['discount']) . '"><div class="input-group-addon">%</div></div></td></tr>';
 					echo '<tr><td>Credit</td><td>' . get_config('billic_currency_prefix') . $user_row['credit'] . get_config('billic_currency_suffix') . '</td></tr>';
@@ -101,16 +100,11 @@ class Users {
 				if (!$billic->user_has_permission($billic->user, $_GET['AjaxPage'])) {
 					err('You do not have permission to view this page');
 				}
-				$billic->module($_GET['AjaxPage']);
-				$billic->enter_module($_GET['AjaxPage']);
-				$billic->modules[$_GET['AjaxPage']]->users_submodule(array(
-					'user' => $user_row,
-				));
-				$billic->exit_module();
+				$billic->module($_GET['AjaxPage'], 'users_submodule', ['user' => $user_row]);
 				exit;
 			}
 			$billic->set_title($user_row['firstname'] . ' ' . $user_row['lastname']);
-			if ($_GET['Login'] == 'Yes' && $billic->user_has_permission($billic->user, 'Users_Login_As_User')) {
+			if (isset($_GET['Login']) && $_GET['Login'] == 'Yes' && $billic->user_has_permission($billic->user, 'Users_Login_As_User')) {
 				if ($billic->user_has_permission($user_row, 'admin') || $billic->user_has_permission($user_row, 'superadmin')) {
 					err('Unable to login to another user with admin permissions');
 				}
@@ -119,7 +113,7 @@ class Users {
 				$_SESSION['adminid'] = $billic->user['id'];
 				$billic->redirect('/Services/');
 			}
-			if ($_GET['Hook'] == 'NewInvoice' && $billic->user_has_permission($billic->user, 'Invoices_New')) {
+			if (isset($_GET['Hook']) && $_GET['Hook'] == 'NewInvoice' && $billic->user_has_permission($billic->user, 'Invoices_New')) {
 				$id = $db->insert('invoices', array(
 					'userid' => $user_row['id'],
 					'date' => time() ,
@@ -128,7 +122,7 @@ class Users {
 				));
 				$billic->redirect('/Admin/Invoices/ID/' . $id . '/');
 			}
-			if ($_GET['Hook'] == 'NewTicket' && $billic->user_has_permission($billic->user, 'Tickets_New')) {
+			if (isset($_GET['Hook']) && $_GET['Hook'] == 'NewTicket' && $billic->user_has_permission($billic->user, 'Tickets_New')) {
 				$title = 'New Ticket';
 				$billic->set_title($title);
 				echo '<h1>' . $title . '</h1>';
@@ -138,7 +132,6 @@ class Users {
 					$services[$service['id']] = $service['id'] . ' ' . $service['domainstatus'] . ' ' . $service['username'] . ' ' . $service['domain'];
 				}
 				unset($servicestmp);
-				$billic->module('FormBuilder');
 				$form = array(
 					'title' => array(
 						'label' => 'Title',
@@ -154,9 +147,7 @@ class Users {
 					) ,
 				);
 				if (isset($_POST['Continue'])) {
-					$billic->modules['FormBuilder']->check_everything(array(
-						'form' => $form,
-					));
+					$billic->module('FormBuilder', 'check_everything', ['form' => $form]);
 					$_POST['serviceid'] = floor($_POST['serviceid']);
 					if (empty($billic->errors)) {
 						$id = $db->insert('tickets', array(
@@ -173,16 +164,12 @@ class Users {
 					}
 				}
 				$billic->show_errors();
-				$billic->modules['FormBuilder']->output(array(
-					'form' => $form,
-					'button' => 'Continue',
-				));
+				$billic->module('FormBuilder', 'output', ['form' => $form, 'button' => 'Continue']);
 				return;
 			}
-			if ($_GET['Hook'] == 'AddCredit' && $billic->user_has_permission($billic->user, 'Users_Assign_Credit')) {
+			if (isset($_GET['Hook']) && $_GET['Hook'] == 'AddCredit' && $billic->user_has_permission($billic->user, 'Users_Assign_Credit')) {
 				$title = 'Add Credit';
 				$billic->set_title($title);
-				$billic->module('FormBuilder');
 				echo '<h1>' . $title . '</h1>';
 				$form = array(
 					'description' => array(
@@ -199,9 +186,7 @@ class Users {
 					) ,
 				);
 				if (isset($_POST['Continue'])) {
-					$billic->modules['FormBuilder']->check_everything(array(
-						'form' => $form,
-					));
+					$billic->module('FormBuilder', 'check_everything', ['form' => $form]);
 					if (!is_numeric($_POST['amount'])) {
 						$billic->error('Amount must be numeric', 'amount');
 					}
@@ -219,13 +204,10 @@ class Users {
 					}
 				}
 				$billic->show_errors();
-				$billic->modules['FormBuilder']->output(array(
-					'form' => $form,
-					'button' => 'Continue',
-				));
+				$billic->module('FormBuilder', 'output', ['form' => $form, 'button' => 'Continue']);
 				return;
 			}
-			if ($_GET['Hook'] == 'RemoveCredit' && $billic->user_has_permission($billic->user, 'Users_Remove_Credit')) {
+			if (isset($_GET['Hook']) && $_GET['Hook'] == 'RemoveCredit' && $billic->user_has_permission($billic->user, 'Users_Remove_Credit')) {
 				$credit = $db->q('SELECT * FROM `logs_credit` WHERE `id` = ?', $_GET['CreditID']);
 				$credit = $credit[0];
 				if (empty($credit)) {
@@ -292,16 +274,15 @@ class Users {
 			echo '</ul></div><div class="tab-content" style="background: #fff;padding: 0 20px 0 20px;-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;text-align: justify;text-justify: inter-word"><div class="tab-pane active" id="clientPage" style="padding:10px"><div id="dashboardLoader">Loading...</div></div></div>';
 			return;
 		}
-		$billic->module('ListManager');
-		$billic->modules['ListManager']->configure(array(
-			'search' => array(
+		$billic->module('ListManager', 'configure', [
+			'search' => [
 				'id' => 'text',
 				'email' => 'text',
 				'firstname' => 'text',
 				'lastname' => 'text',
 				'companyname' => 'text',
-			) ,
-		));
+			],
+		]);
 		$where = '';
 		$where_values = array();
 		if (isset($_POST['search'])) {
@@ -359,25 +340,10 @@ class Users {
 		}
 		foreach ($users as $user_row) {
 			$services = '';
-			$services_pending = $db->q('SELECT COUNT(*) FROM `services` WHERE `domainstatus` = ? AND `userid` = ?', 'Pending', $user_row['id']);
-			$services_pending = $services_active[0]['COUNT(*)'];
-			if ($services_pending > 0) {
-				$services.= $services_pending . ' Pending, ';
-			}
-			$services_active = $db->q('SELECT COUNT(*) FROM `services` WHERE `domainstatus` = ? AND `userid` = ?', 'Active', $user_row['id']);
-			$services_active = $services_active[0]['COUNT(*)'];
-			if ($services_active > 0) {
-				$services.= $services_active . ' Active, ';
-			}
-			$services_suspended = $db->q('SELECT COUNT(*) FROM `services` WHERE `domainstatus` = ? AND `userid` = ?', 'Suspended', $user_row['id']);
-			$services_suspended = $services_suspended[0]['COUNT(*)'];
-			if ($services_suspended > 0) {
-				$services.= $services_suspended . ' Suspended, ';
-			}
-			$services_terminated = $db->q('SELECT COUNT(*) FROM `services` WHERE `domainstatus` = ? AND `userid` = ?', 'Terminated', $user_row['id']);
-			$services_terminated = $services_terminated[0]['COUNT(*)'];
-			if ($services_terminated > 0) {
-				$services.= $services_terminated . ' Terminated, ';
+			$types = ['Pending', 'Active', 'Suspended', 'Terminated'];
+			foreach($types as $type) {
+				$count = $db->count('services', '`domainstatus` = ? AND `userid` = ?', $type, $user_row['id']);
+				if ($count > 0) $services .= $count . ' '.$type.', ';
 			}
 			$services = substr($services, 0, -2);
 			if (empty($services)) {
